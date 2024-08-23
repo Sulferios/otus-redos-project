@@ -1,0 +1,6 @@
+web:
+  hosts:
+    redos-srv
+backup:
+  hosts:
+    redos-backup

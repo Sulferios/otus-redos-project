@@ -1,0 +1,47 @@
+- hosts: backup
+  tasks:
+    - name: Install burp-server
+      ansible.builtin.dnf:
+        name: burp-server
+        state: present
+        update_cache: yes
+    - name: Install dependencies
+      ansible.builtin.dnf:
+        name: uthash-devel, make, gcc, librsync-devel, openssl-devel, libacl-devel, ncurses-devel, zlib-devel, autoconf, automake, libtool
+        state: present
+        update_cache: yes
+    - name: Check burp is active
+      service:
+        name: burp
+        state: started
+        enabled: yes
+    
+    - name: Copy burp client config
+      ansible.builtin.copy:
+        src: ./burp/backup/clientconfdir
+        dest: /etc/burp/clientconfdir
+        mode: u=rw,g=r,o=r
+    
+- hosts: web
+  tasks:
+    - name: Install burp-client
+      ansible.builtin.dnf:
+        name: burp-client
+        state: present
+        update_cache: yes
+    - name: Install dependencies
+      ansible.builtin.dnf:
+        name: uthash-devel, make, gcc, librsync-devel, openssl-devel, libacl-devel, ncurses-devel, zlib-devel, autoconf, automake, libtool
+        state: present
+        update_cache: yes
+    - name: Copy burp client config
+      ansible.builtin.copy:
+        src: ./burp/web/burp.conf
+        dest: /etc/burp/burp.conf
+        mode: u=rw,g=r,o=r
+    - name: Ensure a job for backup exists
+      ansible.builtin.cron:
+        name: "burp backup"
+        minute: "0"
+        hour: "1"
+        job: "burp -a b"

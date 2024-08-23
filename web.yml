@@ -1,0 +1,29 @@
+- hosts: web
+  tasks:
+    - name: Install docker
+      ansible.builtin.dnf:
+        name: docker-ce, docker-ce, docker-compose
+        state: present
+        update_cache: yes
+    - name: Check docker is active
+      service:
+        name: docker
+        state: started
+        enabled: yes
+    - name: Ensure group "docker" exists with correct gid
+      ansible.builtin.group:
+        name: docker
+        state: present
+        gid: 1750
+    - name: Creating and adding user to docker group
+      user:
+        name: docker
+        groups: docker
+        append: yes
+    - name: Copy docker YML files
+      ansible.builtin.copy:
+        src: ./docker/
+        dest: /home/docker/docker/
+        owner: docker
+        group: docker
+        mode: '0744'

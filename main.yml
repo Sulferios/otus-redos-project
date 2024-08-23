@@ -1,0 +1,14 @@
+- name: Install docker and copy compose files
+  import_playbook: web.yml
+  
+- name: Install and set up firewalld
+  import_playbook: firewall.yml
+  
+- name: Set up rsyslog
+  import_playbook: rsyslog.yml
+  
+- name: Install and set up burp
+  import_playbook: backup.yml
+  
+- name: Install and copy config files
+  import_playbook: zabbix.yml

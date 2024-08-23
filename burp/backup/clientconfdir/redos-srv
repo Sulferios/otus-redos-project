@@ -1,0 +1,6 @@
+password = password
+include = /home/docker/docker/npm/data
+include = /home/docker/docker/npm/letsencrypt
+include = /var/lib/docker/volumes/nextcloud_db
+include = /var/lib/docker/volumes/nextcloud_nextcloud
+include = /var/lib/docker/volumes/onlyoffice_postgresql_data

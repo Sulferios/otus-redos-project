@@ -1,0 +1,36 @@
+- hosts: all
+  tasks:
+    - name: Ensure rsyslog installed
+      ansible.builtin.dnf:
+        name: rsyslog
+        state: present
+        update_cache: yes
+    - name: Ensure rsyslog is started and enabled
+      ansible.builtin.service:
+        name: rsyslog
+        state: started
+        enabled: yes
+
+- hosts: backup
+  tasks:
+    - name: Copy rsyslog server config
+      ansible.builtin.copy:
+        src: ./rsyslog/rsyslog.conf
+        dest: /etc/rsyslog.conf
+        mode: u=rw,g=r,o=r
+    - name: Restart rsyslog
+      ansible.builtin.service:
+        name: rsyslog
+        state: restarted
+        
+- hosts: web
+  tasks:
+    - name: Copy rsyslog client config
+      ansible.builtin.copy:
+        src: ./rsyslog/all.conf
+        dest: /etc/rsyslog.d/all.conf
+        mode: u=rw,g=r,o=r
+    - name: Restart rsyslog
+      ansible.builtin.service:
+        name: rsyslog
+        state: restarted

@@ -1,0 +1,89 @@
+- hosts: all
+  tasks:
+    - name: Install firewalld
+      ansible.builtin.dnf:
+        name: firewalld
+        state: present
+        update_cache: yes
+    - name: Check firewalld is active
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+    - name: Permit ssh
+      ansible.posix.firewalld:
+        service: ssh
+        permanent: true
+        state: enabled
+    
+- hosts: web
+  tasks:
+    - name: Permit https
+      ansible.posix.firewalld:
+        service: https
+        permanent: true
+        state: enabled
+    - name: Permit http
+      ansible.posix.firewalld:
+        service: http
+        permanent: true
+        state: enabled
+    - name: Permit connection to nextcloud port
+      ansible.posix.firewalld:
+        port: 8080/tcp
+        permanent: true
+        state: enabled
+    - name: Permit connection to onlyoffice port
+      ansible.posix.firewalld:
+        port: 8060/tcp
+        permanent: true
+        state: enabled
+    - name: Permit connection to portainer port
+      ansible.posix.firewalld:
+        port: 9000/tcp
+        permanent: true
+        state: enabled
+    - name: Permit connection to npm gui port
+      ansible.posix.firewalld:
+        port: 81/tcp
+        permanent: true
+        state: enabled
+    - name: Permit connection to zabbix-agent2 port
+      ansible.posix.firewalld:
+        port: 10050/tcp
+        permanent: true
+        state: enabled
+    - name: Restart firewalld
+      service:
+        name: firewalld
+        state: restarted
+        enabled: yes
+        
+- hosts: backup
+  tasks:
+    - name: Permit connection to rsyslog port
+      ansible.posix.firewalld:
+        port: 514/udp
+        permanent: true
+        state: enabled
+    - name: Permit connection to zabbix-agent2 port
+      ansible.posix.firewalld:
+        port: 10050/tcp
+        permanent: true
+        state: enabled
+    - name: Permit connection to burp port
+      ansible.posix.firewalld:
+        port: 4971/tcp
+        permanent: true
+        state: enabled
+    - name: Permit connection to rsyslog port
+      ansible.posix.firewalld:
+        port: 514/tcp
+        permanent: true
+        state: enabled
+    - name: Restart firewalld
+      service:
+        name: firewalld
+        state: restarted
+        enabled: yes
+    

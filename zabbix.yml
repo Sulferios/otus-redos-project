@@ -1,0 +1,33 @@
+- hosts: web
+  tasks:
+    - name: Install zabbix agent
+      ansible.builtin.dnf:
+        name: zabbix-agent2
+        state: present
+        update_cache: yes
+    - name: Copy zabbix agent config file
+      ansible.builtin.copy:
+        src: ./zabbix/zabbix_agent2.conf
+        dest: /etc/zabbix/zabbix_agent2.conf
+        mode: u=rw,g=r,o=r
+    - name: Restart zabbix agent
+      ansible.builtin.service:
+        name: zabbix-agent2
+        state: restarted
+
+- hosts: backup
+  tasks:
+    - name: Install zabbix agent
+      ansible.builtin.dnf:
+        name: zabbix-agent
+        state: present
+        update_cache: yes
+    - name: Copy zabbix agent config file
+      ansible.builtin.copy:
+        src: ./zabbix/zabbix_agentd.conf
+        dest: /etc/zabbix/zabbix_agentd.conf
+        mode: u=rw,g=r,o=r
+    - name: Restart zabbix agent
+      ansible.builtin.service:
+        name: zabbix-agent
+        state: restarted
